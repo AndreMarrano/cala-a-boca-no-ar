@@ -6,7 +6,7 @@
 <style>:root{color-scheme:dark}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
 </head>
 <body>
-<title>Cala a Boca no Ar</title>
+<title>CALA A BOCA!</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,6 +39,18 @@ body{
 }
 .wrap{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
 .jogador{display:flex;flex-direction:column;gap:12px;min-width:0}
+.resumo-pontos{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding:7px 10px;border:1px solid var(--line);border-radius:4px;background:var(--panel);font:14px/1.3 var(--f-body);font-variant-numeric:tabular-nums}
+.resumo-pontos strong{font-family:Arial,Helvetica,sans-serif;color:var(--fg)}
+.resumo-pontos .bonus-total strong{color:var(--amber)}
+.bonus-proximo{margin-left:auto;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}
+.bonus-proximo.ganhou{color:var(--amber)}
+.progresso-bonus{width:54px;height:7px;appearance:none;border:0;border-radius:4px;overflow:hidden;background:#4b3c2d;accent-color:var(--amber)}
+.progresso-bonus::-webkit-progress-bar{background:#4b3c2d}
+.progresso-bonus::-webkit-progress-value{background:var(--amber)}
+.progresso-bonus::-moz-progress-bar{background:var(--amber)}
+.regra-pontos{color:#e2d8cc;font-size:14px;margin:0 0 12px}
+.fim-resumo{margin:0;color:#e2d8cc;font:15px/1.4 var(--f-body);font-variant-numeric:tabular-nums}
+.cartaz #fimTempo{font-family:Arial,Helvetica,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
 .acoes{display:flex;gap:6px;align-items:center}
 .acao{min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:4px;background:var(--panel);color:var(--fg);font:600 12px var(--f-body);cursor:pointer;touch-action:manipulation}
 .curto{display:none}
@@ -64,9 +76,9 @@ body.modo-foco{overflow:hidden}
 .placar{display:flex;flex-wrap:wrap;align-items:stretch;border:1px solid var(--line);background:var(--panel)}
 .stat{display:flex;flex-direction:column;gap:3px;padding:8px 14px;border-right:1px solid var(--line);min-width:0}
 .rot{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
-.val{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1;font-variant-numeric:tabular-nums}
+.val{font-family:Arial,Helvetica,sans-serif;font-weight:700;font-size:28px;line-height:1.1;letter-spacing:-.025em;white-space:nowrap;font-variant-numeric:tabular-nums}
 .val.cala{color:var(--pink);min-width:3.2ch}
-.val.relogio{min-width:3.4ch}
+.val.relogio{min-width:4.5ch;letter-spacing:0}
 .cartoes{display:flex;gap:6px;align-items:center;height:28px}
 .cartoes i{width:15px;height:21px;border-radius:2px;border:1.5px dashed #5a4b40;display:block}
 .cartoes i.amarelo{background:var(--card-y);border-color:var(--card-y);border-style:solid}
@@ -109,7 +121,7 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border
   .marca .eyebrow{font-size:9px;letter-spacing:.07em}
   .submarca{display:none}
   .titulo{font-size:clamp(22px,6vw,34px);line-height:1;margin:5px 0 0;text-wrap:initial}
-  .placar{grid-column:1/-1;width:100%;display:grid;grid-template-columns:1.25fr repeat(3,minmax(0,1fr))}
+  .placar{grid-column:1/-1;width:100%;display:grid;grid-template-columns:1.2fr 1.2fr .7fr .9fr}
   .stat{padding:7px 9px;gap:3px}
   .stat:last-child{border-right:0}
   .rot{font-size:9px;letter-spacing:.05em}
@@ -125,6 +137,10 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border
   .cartaz>.eyebrow{font-size:9px;justify-content:center}
   .cartaz .lead{font-size:14px;line-height:1.3;max-width:32ch}
   #telaInicio .lead,.cartaz .dica{display:none}
+  .cartaz .recorde{display:block;font:12px/1.3 var(--f-body);letter-spacing:0}
+  .fim-resumo{font-size:12px}
+  .resumo-pontos{gap:5px 12px;font-size:13px;flex-shrink:0}
+  .bonus-proximo{font-size:11px}
   .btn{font-size:20px;padding:11px 20px;min-height:48px;align-self:center}
   .status-jogo{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px;min-height:38px;padding:6px 10px;border:1px solid var(--line);border-radius:4px;background:var(--panel);font-size:13px;line-height:1.3}
   .status-jogo strong{color:var(--fg);font-weight:600}
@@ -167,14 +183,15 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border
   .placar{flex:1;width:auto}
   .stat{padding:4px 9px}
   .val{font-size:22px}
-  .jogador{display:grid;grid-template-columns:minmax(0,1fr) 152px;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;height:calc(100vh - 20px);height:calc(100svh - 20px);min-height:260px}
+  .jogador{display:grid;grid-template-columns:minmax(0,1fr) 152px;grid-template-rows:auto auto minmax(0,1fr) auto;gap:8px;height:calc(100vh - 20px);height:calc(100svh - 20px);min-height:290px}
   .jogador .bar{grid-column:1/-1}
-  .jogador .palco{grid-column:1;grid-row:2/4;min-height:0;height:100%;aspect-ratio:auto}
-  .controles{grid-column:2;grid-row:2;align-self:center}
+  .jogador .resumo-pontos{grid-column:1/-1;grid-row:2;padding-block:4px}
+  .jogador .palco{grid-column:1;grid-row:3/5;min-height:0;height:100%;aspect-ratio:auto}
+  .controles{grid-column:2;grid-row:3;align-self:center}
   .alvos{grid-template-columns:1fr;gap:6px}
   .alvo{min-height:52px;font-size:15px;gap:2px}
   .controles p{font-size:8px}
-  .status-jogo{grid-column:2;grid-row:3;display:block;font-size:11px}
+  .status-jogo{grid-column:2;grid-row:4;display:block;font-size:11px}
   .status-jogo strong,.status-jogo span{display:block}
   .jogador.em-foco{height:100vh;height:100dvh}
 }
@@ -186,11 +203,11 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border
   <header class="bar">
     <div class="marca">
       <p class="eyebrow"><span class="vivo">Ao vivo</span> <span class="submarca">Mesa redonda de futebol</span></p>
-      <h1 class="titulo"><span>Cala a boca</span> no ar</h1>
+      <h1 class="titulo"><span>CALA A BOCA!</span></h1>
     </div>
     <div class="placar">
-      <div class="stat"><span class="rot"><span class="longo">Tempo de cala a boca</span><span class="curto">Cala a boca · s</span></span><span class="val cala" id="vCala">0,0</span></div>
-      <div class="stat"><span class="rot">No ar</span><span class="val relogio" id="vRelogio">2:00</span></div>
+      <div class="stat"><span class="rot">Pontos</span><span class="val cala" id="vCala">0</span></div>
+      <div class="stat"><span class="rot">Tempo</span><span class="val relogio" id="vRelogio" role="timer" aria-label="Tempo restante">2:00</span></div>
       <div class="stat"><span class="rot">Bloco</span><span class="val" id="vBloco">1/3</span></div>
       <div class="stat"><span class="rot">Cartões</span><span class="cartoes" aria-label="Cartões recebidos"><i id="c1"></i><i id="c2"></i></span></div>
     </div>
@@ -199,6 +216,11 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border
       <button class="acao" id="btnAmpliar" type="button" aria-pressed="false" aria-controls="jogador">Ampliar</button>
     </div>
   </header>
+  <div class="resumo-pontos" aria-label="Composição da pontuação">
+    <span>Base <strong id="vBase">0</strong></span>
+    <span class="bonus-total">Bônus <strong id="vBonus">+0</strong></span>
+    <span class="bonus-proximo" id="bonusProximo"><span id="bonusMsg">1 s no alvo: +5</span><progress class="progresso-bonus" id="progressoBonus" max="1" value="0" aria-label="Progresso para o próximo bônus"></progress></span>
+  </div>
 
   <div class="palco">
     <canvas id="jogo" tabindex="0" role="img" aria-label="Estúdio de mesa redonda visto do alto: Caio Caçamba, Gilzão, Avenida Bechler e Ilson Jr nas poltronas, a câmera embaixo e a produção entrando pelas laterais."></canvas>
@@ -216,7 +238,8 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border
     <div class="overlay" id="telaFim" hidden>
       <div class="cartaz">
         <p class="eyebrow" id="fimMotivo">Fim do programa</p>
-        <h2 id="fimTempo">0,0 s de cala a boca</h2>
+        <h2 id="fimTempo">0 pontos</h2>
+        <p class="fim-resumo" id="fimResumo"></p>
         <p class="lead" id="fimTitulo"></p>
         <p class="dica recorde" id="fimRecorde"></p>
         <button class="btn" id="btnDeNovo" type="button">Voltar ao ar</button>
@@ -239,6 +262,7 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border
  </div>
  <details class="ajuda">
   <summary>Como jogar</summary>
+  <p class="regra-pontos">Cada 0,1 segundo segurando no falante certo vale 1 ponto. A cada 1 segundo seguido de acerto, você ganha mais 5 pontos de bônus. Os bônus ficam no total mesmo depois de soltar. Errar o alvo ou ser pego interrompe a sequência.</p>
   <section class="legenda" aria-label="Como jogar">
     <div class="item">
       <span class="sw sw-voce" aria-hidden="true">CALA<br>A BOCA</span>
@@ -294,12 +318,13 @@ const CFG = {
     olhando: [1.4, 2.6],
     olhadas: [1, 3]          // olhadas por visita
   },
-  fala: { min: [2.6, 1.3], max: [4.6, 2.6], pausa: [0.7, 0.3] }
+  fala: { min: [3.8, 2.4], max: [5.8, 3.8], pausa: [0.8, 0.45] },
+  pontos: { fracao: 0.1, bonusACada: 1, bonus: 5 }
 };
 
 const W = 960, H = 600, DEG = Math.PI / 180;
 const CAM = { x: 480, y: 650 };
-const CHAVE = 'cala-a-boca-recorde';
+const CHAVE = 'cala-a-boca-recorde-pontos-v1';
 
 /* ---------- utilitários ---------- */
 const $ = s => document.querySelector(s);
@@ -319,6 +344,7 @@ function circ(g, x, y, r) { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fil
 function elip(g, x, y, rx, ry) { g.beginPath(); g.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); g.fill(); }
 const fmtNum = v => v.toFixed(1).replace('.', ',');
 const fmt = v => fmtNum(v) + ' s';
+const fmtPontos = v => Math.floor(v).toLocaleString('pt-BR');
 function mmss(s) { s = Math.ceil(s); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
 
 /* ---------- elenco: A = Caio Caçamba, B = Gilzão (jogável), C = Avenida Bechler, D = Ilson Jr ---------- */
@@ -357,7 +383,22 @@ Object.values(PLANOS).forEach(p => { p.pega = Math.abs(angDiff(p.ang, ANG.B)) < 
 /* ---------- estado ---------- */
 let T = 0;
 const jogo = { modo: 'demo', tempo: 0, congela: 0, bloco: 1, fx: [], recorde: 0, mudo: false };
-const jog = { alvo: 'C', segP: false, segK: false, ponteiro: null, travado: false, ativo: false, exp: 0, invul: 0, calaBoca: 0, cartoes: 0, demoCalaBoca: 0 };
+const jog = { alvo: 'C', segP: false, segK: false, ponteiro: null, travado: false, ativo: false, exp: 0, invul: 0, calaBoca: 0, pontosBase: 0, bonus: 0, sequencia: 0, sequenciaFala: null, bonusAviso: 0, ultimoBonus: 0, cartoes: 0, demoCalaBoca: 0 };
+const totalPontos = () => jog.pontosBase + jog.bonus;
+function zerarSequencia() { jog.sequencia = 0; jog.sequenciaFala = null; }
+function pontuar(dt) {
+  if (jogo.modo !== 'jogando' || !(dt > 0) || !jog.ativo || !fala.quem || fala.quem !== jog.alvo) { zerarSequencia(); return; }
+  const vez = fala.quem + '|' + fala.inicio;
+  if (jog.sequenciaFala !== vez) { zerarSequencia(); jog.sequenciaFala = vez; }
+  const antes = Math.floor((jog.sequencia + 1e-7) / CFG.pontos.bonusACada);
+  jog.calaBoca += dt; jog.sequencia += dt;
+  jog.pontosBase = Math.floor((jog.calaBoca + 1e-7) / CFG.pontos.fracao);
+  const depois = Math.floor((jog.sequencia + 1e-7) / CFG.pontos.bonusACada);
+  if (depois > antes) {
+    const ganho = (depois - antes) * CFG.pontos.bonus;
+    jog.bonus += ganho; jog.ultimoBonus = ganho; jog.bonusAviso = 1.2;
+  }
+}
 const fala = { quem: 'C', ultimo: 'C', t: 3, frase: FRASES[0], inicio: 0, pausa: false };
 const cam = { ang: PLANOS.ABERTO.ang, half: PLANOS.ABERTO.half, plano: 'ABERTO', estado: 'hold', t: 2, alvo: null, corte: false, fintaEm: null, fintou: 0, flash: 0, angIni: 0, halfIni: 0, prog: 0, dur: 1 };
 const prod = { estado: 'fora', t: 4, lado: 'E', x: -80, y: 590, olhadas: 0 };
@@ -478,6 +519,7 @@ function banner(b) { jogo.fx.push({ tipo: 'banner', t: 0, dur: 2.6, b }); }
 function avisar(txt) { const el = $('#aviso'); if (el) el.textContent = txt; }
 
 function flagra(quem) {
+  zerarSequencia();
   jog.cartoes++; jog.travado = true; jog.ativo = false; jog.exp = 0; jog.invul = CFG.invul;
   jogo.modo = 'flagra'; jogo.congela = CFG.congela;
   const verm = jog.cartoes >= CFG.cartoesParaExpulsao;
@@ -493,23 +535,25 @@ function titulo(s) {
   return 'Camisa 10 do cala a boca. Ninguém terminou uma frase.';
 }
 function fim(motivo) {
+  zerarSequencia();
   jogo.modo = 'fim'; somCalaBoca(false); jog.ativo = false; jog.segP = jog.segK = false;
-  const s = jog.calaBoca, novo = s > jogo.recorde + 0.05;
-  if (novo) { jogo.recorde = s; try { localStorage.setItem(CHAVE, String(s)); } catch (_) {} }
+  const s = jog.calaBoca, pontos = totalPontos(), novo = pontos > jogo.recorde;
+  if (novo) { jogo.recorde = pontos; try { localStorage.setItem(CHAVE, String(pontos)); } catch (_) {} }
   $('#fimMotivo').textContent = motivo === 'expulso' ? 'Expulso do programa' : 'Fim do programa';
-  $('#fimTempo').textContent = fmt(s) + ' de cala a boca';
+  $('#fimTempo').textContent = fmtPontos(pontos) + ' pontos';
+  $('#fimResumo').textContent = fmtPontos(jog.pontosBase) + ' base + ' + fmtPontos(jog.bonus) + ' de bônus · ' + fmt(s) + ' de acerto';
   $('#fimTitulo').textContent = titulo(s);
-  $('#fimRecorde').textContent = novo ? 'Novo recorde neste aparelho.' : 'Recorde neste aparelho: ' + fmt(jogo.recorde);
+  $('#fimRecorde').textContent = (novo ? 'Novo recorde: ' : 'Recorde neste aparelho: ') + fmtPontos(jogo.recorde) + ' pontos';
   $('#telaFim').hidden = false;
-  avisar('Fim. ' + fmt(s) + ' de cala a boca.');
+  avisar('Fim. ' + fmtPontos(pontos) + ' pontos, incluindo ' + fmtPontos(jog.bonus) + ' de bônus.');
   $('#btnDeNovo').focus({ preventScroll: true });
 }
 
 function comecar() {
   iniciarAudio();
   jogo.modo = 'jogando'; jogo.tempo = 0; jogo.bloco = 1; jogo.fx = [];
-  Object.assign(jog, { alvo: 'C', segP: false, segK: false, ponteiro: null, travado: false, ativo: false, exp: 0, invul: 1.2, calaBoca: 0, cartoes: 0 });
-  Object.assign(fala, { quem: 'C', ultimo: 'C', t: 3.4, frase: novaFrase(), inicio: T, pausa: false });
+  Object.assign(jog, { alvo: 'C', segP: false, segK: false, ponteiro: null, travado: false, ativo: false, exp: 0, invul: 1.2, calaBoca: 0, pontosBase: 0, bonus: 0, sequencia: 0, sequenciaFala: null, bonusAviso: 0, ultimoBonus: 0, cartoes: 0 });
+  Object.assign(fala, { quem: 'C', ultimo: 'C', t: 4.8, frase: novaFrase(), inicio: T, pausa: false });
   const p = PLANOS.C;
   Object.assign(cam, { ang: p.ang, half: p.half, plano: 'C', estado: 'hold', t: 3.2, alvo: null, fintaEm: null, fintou: 0, flash: 0 });
   Object.assign(prod, { estado: 'fora', t: rand(7, 10), lado: 'E', x: -80 });
@@ -519,7 +563,9 @@ function comecar() {
 }
 
 function update(dt) {
+  if (jogo.modo === 'jogando') dt = Math.min(dt, Math.max(0, CFG.duracao - jogo.tempo));
   T += dt;
+  jog.bonusAviso = Math.max(0, jog.bonusAviso - dt);
   for (const f of jogo.fx) f.t += dt;
   jogo.fx = jogo.fx.filter(f => f.t < f.dur);
   if (cam.flash > 0) cam.flash = Math.max(0, cam.flash - dt);
@@ -544,7 +590,7 @@ function update(dt) {
       jog.exp += dt;
       if (jog.exp >= CFG.graca) { flagra(camPega ? 'camera' : 'producao'); return; }
     } else jog.exp = 0;
-    if (jog.ativo && fala.quem === jog.alvo) jog.calaBoca += dt;
+    pontuar(dt);
     somCalaBoca(jog.ativo);
     if (jogo.tempo >= CFG.duracao) fim('fim');
   } else {
@@ -1232,11 +1278,11 @@ function caixa(g, x, y, w, h, fundo, borda) {   // caixa com cantos chanfrados d
   g.fillStyle = fundo; g.fillRect(x + 2, y + 2, w - 4, h - 4);
 }
 function textoTV() {
-  const v = jogo.modo === 'demo' ? jog.demoCalaBoca : jog.calaBoca;
+  const v = jogo.modo === 'demo' ? 0 : totalPontos();
   ctx.fillStyle = 'rgba(10,10,12,.85)'; ctx.fillRect(412, 166, 136, 14);
   ctx.fillStyle = '#ff4f8b'; ctx.fillRect(412, 166, 4, 14);
   ctx.font = '600 10px ' + FONTE; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#f4efe8'; ctx.fillText('CALA A BOCA ' + fmtNum(v) + ' s', 420, 173.5);
+  ctx.fillStyle = '#f4efe8'; ctx.fillText('CALA A BOCA! ' + fmtPontos(v) + ' PTS', 420, 173.5);
 }
 function drawNomes() {
   ctx.font = '700 15px ' + FONTE; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -1345,7 +1391,12 @@ const hudCache = {};
 function setTxt(id, v) { if (hudCache[id] !== v) { hudCache[id] = v; $('#' + id).textContent = v; } }
 function hud() {
   const demo = jogo.modo === 'demo';
-  setTxt('vCala', fmtNum(demo ? 0 : jog.calaBoca));
+  setTxt('vCala', fmtPontos(demo ? 0 : totalPontos()));
+  setTxt('vBase', fmtPontos(demo ? 0 : jog.pontosBase));
+  setTxt('vBonus', '+' + fmtPontos(demo ? 0 : jog.bonus));
+  setTxt('bonusMsg', !demo && jog.bonusAviso > 0 ? 'Bônus +' + fmtPontos(jog.ultimoBonus) + '!' : '1 s no alvo: +5');
+  $('#bonusProximo').classList.toggle('ganhou', !demo && jog.bonusAviso > 0);
+  $('#progressoBonus').value = demo ? 0 : clamp((jog.sequencia % CFG.pontos.bonusACada) / CFG.pontos.bonusACada, 0, 1);
   setTxt('vRelogio', mmss(demo ? CFG.duracao : Math.max(0, CFG.duracao - jogo.tempo)));
   setTxt('vBloco', (demo ? 1 : jogo.bloco) + '/' + CFG.blocos);
   const c = demo ? 0 : jog.cartoes;
@@ -1378,9 +1429,10 @@ function pontoLogico(e) {
 function mirar(pt) {
   let melhor = jog.alvo, bd = Infinity;
   for (const k of FALANTES) { const h = cabeca(GENTE[k]); const dd = (h.x - pt.x) ** 2 + (h.y + 20 - pt.y) ** 2; if (dd < bd) { bd = dd; melhor = k; } }
-  jog.alvo = melhor;
+  definirAlvo(melhor);
 }
-function checarSoltou() { if (!jog.segP && !jog.segK) jog.travado = false; }
+function definirAlvo(alvo) { if (jog.alvo !== alvo) zerarSequencia(); jog.alvo = alvo; }
+function checarSoltou() { if (!jog.segP && !jog.segK) { jog.travado = false; jog.ativo = false; zerarSequencia(); } }
 let origemP = null;
 const botoesAlvo = Array.from(document.querySelectorAll('[data-alvo]'));
 function segurarP(e, origem) {
@@ -1403,10 +1455,10 @@ for (const origem of [canvas, ...botoesAlvo]) {
   origem.addEventListener('contextmenu', e => e.preventDefault());
 }
 for (const btn of botoesAlvo) {
-  btn.addEventListener('pointerdown', e => { if (segurarP(e, btn)) jog.alvo = btn.dataset.alvo; });
-  btn.addEventListener('focus', () => { if (emJogo()) jog.alvo = btn.dataset.alvo; });
+  btn.addEventListener('pointerdown', e => { if (segurarP(e, btn)) definirAlvo(btn.dataset.alvo); });
+  btn.addEventListener('focus', () => { if (emJogo()) definirAlvo(btn.dataset.alvo); });
 }
-function mudarAlvo(dir) { const i = FALANTES.indexOf(jog.alvo); jog.alvo = FALANTES[(i + dir + FALANTES.length) % FALANTES.length]; }
+function mudarAlvo(dir) { const i = FALANTES.indexOf(jog.alvo); definirAlvo(FALANTES[(i + dir + FALANTES.length) % FALANTES.length]); }
 window.addEventListener('keydown', e => {
   if (e.code === 'Escape' && $('#jogador').classList.contains('em-foco')) { alternarFoco(false); return; }
   if (!emJogo()) return;
@@ -1457,15 +1509,15 @@ function laco(agora) {
   requestAnimationFrame(laco);
 }
 function iniciar(dados) {
-  try { const v = parseFloat(localStorage.getItem(CHAVE)); if (v > 0) jogo.recorde = v; } catch (_) {}
-  if (dados && typeof dados.recorde === 'number') jogo.recorde = Math.max(jogo.recorde, dados.recorde);
+  try { const v = Number(localStorage.getItem(CHAVE)); if (Number.isSafeInteger(v) && v > 0) jogo.recorde = v; } catch (_) {}
+  if (dados && dados.versaoPontos === 1 && Number.isSafeInteger(dados.recorde) && dados.recorde > 0) jogo.recorde = Math.max(jogo.recorde, dados.recorde);
   if (dados && dados.mudo) setMudo(true);
   fala.frase = novaFrase(); fala.inicio = 0;
   renderFundo();
   ajustar();
   requestAnimationFrame(laco);
 }
-if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(() => ({ recorde: jogo.recorde, mudo: jogo.mudo }));
+if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(() => ({ versaoPontos: 1, recorde: jogo.recorde, mudo: jogo.mudo }));
 window.claude?.hot?.ready ? window.claude.hot.ready(iniciar) : iniciar(window.claude?.hot?.data ?? {});
 })();
 </script>

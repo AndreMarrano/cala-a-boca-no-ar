@@ -38,12 +38,14 @@ Este é um ranking casual: o placar é calculado pelo navegador. O servidor conf
 
 ### Backend
 
+- Projeto: `cala-a-boca-ranking`, organização `andremarrano`, região São Paulo. Endpoint público configurado em `ranking-config.js`.
 - Migração: `supabase/migrations/20261022171839_ranking_nome_pin.sql`.
 - Endpoint: `supabase/functions/cala-ranking/index.ts`, sem dependências externas.
 - `verify_jwt = false` porque a autenticação das gravações usa nome + PIN na própria função. Isso não libera acesso às tabelas ou às funções SQL para usuários públicos.
 - Chaves do servidor são lidas do ambiente `SUPABASE_SECRET_KEYS`, com compatibilidade para `SUPABASE_SERVICE_ROLE_KEY`. Nunca colocar essas chaves em HTML, `ranking-config.js`, logs ou commits.
 - A origem de navegador permitida é `https://andremarrano.github.io`. Atualizar `ORIGEM` na função se mudar o domínio do jogo.
 - A API usa GET para consultar e POST com JSON para consultar nome (`action: inspect`) ou publicar (`action: submit`). PIN é enviado somente no corpo HTTPS, nunca na URL.
+- O Security Advisor pode informar [RLS Enabled No Policy](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy) para as duas tabelas privadas. Isso é intencional: nenhum cliente tem acesso e a ausência de políticas nega todas as linhas; somente `service_role` do servidor, que ignora RLS, tem os grants necessários. Não criar políticas públicas para remover esse aviso informativo.
 
 ### Verificar o ranking
 

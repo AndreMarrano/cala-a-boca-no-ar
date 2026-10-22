@@ -1,0 +1,3 @@
+[functions.cala-ranking]
+# Nome + PIN são validados no servidor, sem uma conta Supabase Auth.
+verify_jwt = false

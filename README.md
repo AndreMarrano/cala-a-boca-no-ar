@@ -15,6 +15,8 @@ python3 -m http.server 8000
 ## Como jogar
 
 - Segure o dedo ou o mouse sobre quem está falando. No teclado, `←` `→` escolhe a pessoa e `Espaço` segura o "cala a boca".
+- No celular, também é possível segurar um dos três botões abaixo da cena. O botão destacado indica quem está falando; solte para parar. O aviso em texto informa quando a câmera ou a produção podem pegar o Gilzão.
+- Use **Ampliar** para ocupar a área disponível do navegador. Deitado, o celular mostra os controles ao lado da cena. **Sair** (ou `Esc`) volta ao layout normal; **Como jogar** abre as instruções.
 - Só conta tempo quando o alvo é quem está falando.
 - Câmera: o cone vermelho é o que está no ar; o contorno tracejado avisa o próximo plano.
 - Produção: no celular, pode mandar; com a exclamação, ela vai olhar.
@@ -29,6 +31,7 @@ As regras, a interface e o cenário estão em `index.html`, sem build. A arte do
 | Dificuldade (tempos, chances, velocidade) | objeto `CFG`, no topo do script. Cada par `[início, fim]` é interpolado ao longo do programa |
 | Personagens (nome, posição e visual de fallback) | `GENTE` — A = Caio Caçamba, B = Gilzão (jogável), C = Avenida Bechler, D = Ilson Jr |
 | Arte dos personagens | `assets/personagens.png`, com duas poses por personagem. `RECORTES_PERSONAGENS` e `blitPersonagemDetalhado()` definem os recortes, o tamanho e a ancoragem na mesma posição lógica |
+| Layout e controles no celular | CSS responsivo, `janelaCena()` / `enquadramento()` / `pontoLogico()` para desenho e toque na mesma projeção, `segurarP()` para segurar um alvo, `alternarFoco()` para ampliar |
 | Frases dos balões | `FRASES` |
 | Planos e direção de câmera | `PLANOS`, `escolherPlano()`, `camUpdate()` |
 | Produção | `prodUpdate()`, `produtorPx()` |

@@ -53,13 +53,13 @@ body.modo-foco{overflow:hidden}
 .em-foco .marca{display:none}
 .em-foco .bar{display:flex;flex-wrap:nowrap;align-items:stretch;gap:8px}
 .em-foco .placar{flex:1}
-.bar{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+.bar{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:end;gap:12px}
 .marca{min-width:0}
 .eyebrow{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .vivo{display:inline-flex;align-items:center;gap:6px;color:var(--fg);background:#3a1512;border:1px solid #6b211b;padding:2px 7px;border-radius:2px}
 .vivo::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--tally);box-shadow:0 0 8px var(--tally);animation:pisca 1.2s steps(2) infinite}
 @keyframes pisca{50%{opacity:.25}}
-.titulo{font-family:var(--f-display);font-weight:700;font-size:clamp(34px,6vw,58px);line-height:.92;letter-spacing:0;text-transform:uppercase;margin:8px 0 0;text-wrap:balance}
+.titulo{font-family:var(--f-display);font-weight:700;font-size:clamp(34px,4vw,44px);line-height:.92;letter-spacing:0;text-transform:uppercase;margin:8px 0 0;text-wrap:balance}
 .titulo span{color:var(--pink)}
 .placar{display:flex;flex-wrap:wrap;align-items:stretch;border:1px solid var(--line);background:var(--panel)}
 .stat{display:flex;flex-direction:column;gap:3px;padding:8px 14px;border-right:1px solid var(--line);min-width:0}
@@ -156,13 +156,18 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border
   .alvo{font-size:14px}
   .cartaz .lead{font-size:12px}
 }
+@media (orientation:portrait) and (max-width:760px){
+  .em-foco .bar{display:grid;grid-template-columns:minmax(0,1fr) auto}
+  .em-foco .marca{display:block}
+  .em-foco .placar{width:100%}
+}
 @media (orientation:landscape) and (max-height:500px){
   .marca{display:none}
   .bar{display:flex;flex-wrap:nowrap;gap:8px}
   .placar{flex:1;width:auto}
   .stat{padding:4px 9px}
   .val{font-size:22px}
-  .jogador{display:grid;grid-template-columns:minmax(0,1fr) 152px;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;height:calc(100svh - 20px);min-height:260px}
+  .jogador{display:grid;grid-template-columns:minmax(0,1fr) 152px;grid-template-rows:auto minmax(0,1fr) auto;gap:8px;height:calc(100vh - 20px);height:calc(100svh - 20px);min-height:260px}
   .jogador .bar{grid-column:1/-1}
   .jogador .palco{grid-column:1;grid-row:2/4;min-height:0;height:100%;aspect-ratio:auto}
   .controles{grid-column:2;grid-row:2;align-self:center}
@@ -1349,14 +1354,17 @@ function hud() {
   setTxt('statusFala', demo ? 'Pronto para entrar no ar' : (jogo.modo === 'fim' ? 'Programa encerrado' : (fala.quem ? GENTE[fala.quem].nome + ' está falando' : 'A mesa fez uma pausa')));
   setTxt('statusRisco', !rodando ? '2 amarelos = expulsão' : (jogo.modo === 'flagra' ? 'Flagra! Solte para continuar' : (risco ? 'Estão vendo o Gilzão · solte!' : (prod.estado === 'aviso' ? 'A produção vai olhar · atenção!' : 'Fora de vista · pode mandar'))));
   $('#statusJogo').classList.toggle('perigo', rodando && risco);
-  for (const btn of botoesAlvo) {
-    const falando = rodando && fala.quem === btn.dataset.alvo;
-    const pressionado = rodando && jog.ativo && jog.alvo === btn.dataset.alvo;
-    btn.disabled = !rodando;
-    btn.classList.toggle('falando', falando); btn.classList.toggle('pressionado', pressionado);
-    btn.setAttribute('aria-pressed', String(pressionado));
-    const legenda = pressionado ? 'Solte para parar' : (falando ? 'Falando agora' : 'Segure');
-    if (btn.lastElementChild.textContent !== legenda) btn.lastElementChild.textContent = legenda;
+  const estadoAlvos = [rodando, fala.quem, jog.ativo, jog.alvo].join('|');
+  if (hudCache.alvos !== estadoAlvos) {
+    hudCache.alvos = estadoAlvos;
+    for (const btn of botoesAlvo) {
+      const falando = rodando && fala.quem === btn.dataset.alvo;
+      const pressionado = rodando && jog.ativo && jog.alvo === btn.dataset.alvo;
+      btn.disabled = !rodando;
+      btn.classList.toggle('falando', falando); btn.classList.toggle('pressionado', pressionado);
+      btn.setAttribute('aria-pressed', String(pressionado));
+      btn.lastElementChild.textContent = pressionado ? 'Solte para parar' : (falando ? 'Falando agora' : 'Segure');
+    }
   }
 }
 
@@ -1427,6 +1435,7 @@ function alternarFoco(ativo = !$('#jogador').classList.contains('em-foco')) {
 }
 $('#btnAmpliar').addEventListener('click', () => alternarFoco());
 compacto.addEventListener('change', () => { limparEntrada(); ajustar(); });
+window.matchMedia('(orientation:landscape)').addEventListener('change', limparEntrada);
 
 /* ---------- tamanho e enquadramento responsivos, sem distorcer a arte ---------- */
 function ajustar() {

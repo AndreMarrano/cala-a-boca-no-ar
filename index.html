@@ -510,9 +510,10 @@ function setMudo(m) {
 
 /* =====================================================================
    DESENHO EM PIXEL ART
-   Cenário e personagens são desenhados num buffer de 480×300 pixels
-   (metade da grade lógica 960×600 usada pelas regras) e ampliados sem
-   suavização. Textos, etiquetas e balões vão por cima em alta resolução.
+   O cenário e os efeitos usam um buffer de 480×300 pixels. Os personagens
+   da referência são compostos diretamente na grade lógica de 960×600,
+   sem suavização, para preservar os detalhes. As regras continuam na
+   mesma grade; textos, etiquetas e balões vão por cima.
    ===================================================================== */
 const canvas = $('#jogo');
 const ctx = canvas.getContext('2d');
@@ -604,6 +605,34 @@ function contornar(cv, cor) {   // contorno de 1 pixel em volta de tudo que não
 /* ---------- personagens (sprites gerados e guardados em cache) ---------- */
 const SW = 72, SH = 92, AX = 36, AY = 60;   // tamanho do sprite e ponto de ancoragem (centro do assento)
 const cacheSpr = new Map();
+// Cada recorte inclui a mesma área nos dois quadros, evitando saltos na animação.
+// A cabeça continua em cabeca(pe) e o centro do assento continua em pe.x/pe.y.
+const artePersonagens = new Image();
+artePersonagens.src = 'assets/personagens.png';
+const RECORTES_PERSONAGENS = {
+  A: { x: 20, y: 75, w: 358, h: 475, passo: 483, cabecaX: 130, cabecaY: 79, escala: .275 },
+  B: { x: 400, y: 75, w: 318, h: 475, passo: 483, cabecaX: 124, cabecaY: 79, escala: .275 },
+  C: { x: 720, y: 75, w: 348, h: 475, passo: 480, cabecaX: 204, cabecaY: 79, escala: .275 },
+  D: { x: 1075, y: 75, w: 373, h: 475, passo: 480, cabecaX: 235, cabecaY: 79, escala: .275 }
+};
+
+function blitPersonagemDetalhado(id) {
+  const pe = GENTE[id], e = estadoPersonagem(pe), recorte = RECORTES_PERSONAGENS[id];
+  if (!recorte || !artePersonagens.complete || !artePersonagens.naturalWidth) {
+    // Mantém o jogo disponível mesmo se o arquivo de arte não carregar.
+    const s = personagemSprite(pe, e);
+    ctx.drawImage(s, pe.x - AX * 2, pe.y - AY * 2, SW * 2, SH * 2);
+    return;
+  }
+  const quadro = id === 'B' ? (e.cala ? 1 : 0) : (e.boca === 'a' && e.gesto ? 1 : 0);
+  const pulo = fala.quem === id && Math.sin(T * 10) > 0.3 ? -2 : 0;
+  ctx.drawImage(artePersonagens,
+    recorte.x, recorte.y + quadro * recorte.passo, recorte.w, recorte.h,
+    pe.x - recorte.cabecaX * recorte.escala,
+    pe.y - 54 - recorte.cabecaY * recorte.escala + pulo,
+    recorte.w * recorte.escala, recorte.h * recorte.escala);
+}
+
 function tenis(g, x, y, c) { R(g, x, y, 8, 4, c); R(g, x + 1, y, 6, 1, tom(c, 1.15)); R(g, x + 3, y + 1, 2, 1, tom(c, .7)); R(g, x, y + 3, 8, 1, tom(c, .6)); }
 function tenisLado(g, x, y, c) { bloco(g, x, y, 10, 5, 2, c); R(g, x + 2, y, 6, 1, tom(c, 1.15)); R(g, x, y + 4, 10, 1, tom(c, .6)); R(g, x + 5, y + 1, 1, 2, tom(c, .7)); }
 
@@ -754,12 +783,6 @@ function estadoPersonagem(pe) {
   const gesto = falando ? (Math.sin(T * 5 + pe.x) > 0 ? 1 : 2) : 0;
   return { olhar, boca, cala, gesto };
 }
-function blitPersonagem(id) {
-  const pe = GENTE[id], s = personagemSprite(pe, estadoPersonagem(pe));
-  const pulo = (fala.quem === id && Math.sin(T * 10) > 0.3) ? -1 : 0;
-  pc.drawImage(s, bx(pe.x) - AX, bx(pe.y) - AY + pulo);
-}
-
 /* ---------- cenário (pré-renderizado uma vez) ---------- */
 function madeiraPx(g, x, y, w, h, Rn) {
   const tons = ['#8d5734', '#83502f', '#94603a', '#7c4a2a'];
@@ -1079,7 +1102,9 @@ function produtorPx() {
 function desenharPixel() {
   pc.drawImage(fundoPx, 0, 0);
   miraPx();
-  blitPersonagem('B'); blitPersonagem('C'); blitPersonagem('A'); blitPersonagem('D');
+}
+function desenharEfeitosPixel() {
+  pc.clearRect(0, 0, PW, PH);
   conePx();
   cameraPx();
   produtorPx();
@@ -1187,6 +1212,10 @@ function draw() {
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.imageSmoothingEnabled = false;
   ctx.drawImage(pxCv, 0, 0, canvas.width, canvas.height);
   const s = canvas.width / W; ctx.setTransform(s, 0, 0, s, 0, 0);
+  blitPersonagemDetalhado('B'); blitPersonagemDetalhado('C');
+  blitPersonagemDetalhado('A'); blitPersonagemDetalhado('D');
+  desenharEfeitosPixel();
+  ctx.drawImage(pxCv, 0, 0, W, H);
   textoTV(); drawNomes(); drawAlertaTexto();
   if (jog.ativo) drawCalaTexto();
   if (fala.quem) drawBalao(GENTE[fala.quem]);

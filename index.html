@@ -11,6 +11,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=Martian+Mono:wght@400;600&family=Pixelify+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="ranking.css?v=20261022-1">
+<script src="ranking-config.js?v=20261022-1" defer></script>
+<script src="ranking.js?v=20261022-1" defer></script>
 <style>
 /* Layout: transmissão ao vivo — barra de placar no topo, o estúdio como monitor de programa, legenda de leitura embaixo */
 :root{
@@ -235,14 +238,18 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border
       </div>
     </div>
 
-    <div class="overlay" id="telaFim" hidden>
+    <div class="overlay overlay-fim" id="telaFim" hidden>
       <div class="cartaz">
         <p class="eyebrow" id="fimMotivo">Fim do programa</p>
         <h2 id="fimTempo">0 pontos</h2>
         <p class="fim-resumo" id="fimResumo"></p>
         <p class="lead" id="fimTitulo"></p>
         <p class="dica recorde" id="fimRecorde"></p>
-        <button class="btn" id="btnDeNovo" type="button">Voltar ao ar</button>
+        <p class="convite-ranking">Quer colocar sua pontuação no ranking?</p>
+        <div class="acoes-fim">
+          <button class="btn" id="btnPublicar" type="button">Entrar no ranking</button>
+          <button class="btn btn-secundario" id="btnDeNovo" type="button">Voltar ao ar</button>
+        </div>
       </div>
     </div>
   </div>
@@ -260,6 +267,10 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border
     </div>
   </div>
  </div>
+ <section class="ranking-chamada" aria-label="Ranking geral">
+   <div><strong>Ranking geral</strong><span>Uma vaga por jogador · vale sua melhor pontuação</span></div>
+   <button class="acao" id="btnRanking" type="button">Ver ranking</button>
+ </section>
  <details class="ajuda">
   <summary>Como jogar</summary>
   <p class="regra-pontos">Cada 0,1 segundo segurando no falante certo vale 1 ponto. A cada 1 segundo seguido de acerto, você ganha mais 5 pontos de bônus. Os bônus ficam no total mesmo depois de soltar. Errar o alvo ou ser pego interrompe a sequência.</p>
@@ -285,6 +296,37 @@ kbd{font-family:var(--f-mono);font-size:11px;border:1px solid var(--line);border
   <p class="nota">2 minutos · 3 blocos · 2 amarelos = expulsão. No celular, experimente jogar deitado e toque em Ampliar.</p>
   <p class="sr" id="aviso" aria-live="polite"></p>
 </div>
+
+<dialog class="ranking-dialog" id="rankingDialog" aria-labelledby="rankingTitulo">
+  <header class="ranking-cabecalho">
+    <div><p class="eyebrow">CALA A BOCA!</p><h2 id="rankingTitulo">Ranking geral</h2></div>
+    <button class="acao" id="rankingFechar" type="button" aria-label="Fechar ranking">Fechar</button>
+  </header>
+  <section id="rankingCadastro" hidden>
+    <p class="ranking-pontos" id="rankingPontos"></p>
+    <p class="ranking-texto">Escolha seu nome público e um código de 4 números. Se já jogou, use o mesmo nome e código.</p>
+    <form id="rankingForm">
+      <label for="rankingNome">Nome no ranking</label>
+      <input id="rankingNome" name="nome" type="text" maxlength="48" autocomplete="nickname" required aria-describedby="rankingNomeDica">
+      <p class="ranking-dica" id="rankingNomeDica">De 1 a 24 caracteres. Cada nome pertence a um jogador.</p>
+      <label for="rankingPin">Código individual</label>
+      <input class="ranking-pin" id="rankingPin" name="codigo" type="password" inputmode="numeric" pattern="[0-9]{4}" minlength="4" maxlength="4" autocomplete="off" required aria-describedby="rankingPinDica">
+      <p class="ranking-dica" id="rankingPinDica">Exatamente 4 números, inclusive zero no início. Guarde seu código.</p>
+      <div class="ranking-novo" id="rankingNovo" hidden>
+        <p>Este nome ainda não existe. Seu cadastro será criado agora.</p>
+        <label for="rankingConfirmar">Repita o código para confirmar</label>
+        <input class="ranking-pin" id="rankingConfirmar" name="confirmacao" type="password" inputmode="numeric" pattern="[0-9]{4}" minlength="4" maxlength="4" autocomplete="off">
+      </div>
+      <p class="ranking-mensagem" id="rankingMensagem" role="status" aria-live="polite"></p>
+      <button class="btn" id="rankingEnviar" type="submit">Continuar</button>
+    </form>
+  </section>
+  <section id="rankingLista" aria-label="Melhores pontuações">
+    <p class="ranking-mensagem" id="rankingResultado" role="status" aria-live="polite"></p>
+    <div class="ranking-tabela"><table><caption>As 50 melhores pontuações</caption><thead><tr><th scope="col">Pos.</th><th scope="col">Jogador</th><th scope="col">Pontos</th></tr></thead><tbody id="rankingLinhas"></tbody></table></div>
+    <button class="acao" id="rankingAtualizar" type="button">Atualizar ranking</button>
+  </section>
+</dialog>
 
 <script>
 (() => {
@@ -545,11 +587,15 @@ function fim(motivo) {
   $('#fimTitulo').textContent = titulo(s);
   $('#fimRecorde').textContent = (novo ? 'Novo recorde: ' : 'Recorde neste aparelho: ') + fmtPontos(jogo.recorde) + ' pontos';
   $('#telaFim').hidden = false;
+  $('#jogador').classList.add('rodada-encerrada');
+  window.CalaRanking?.fim(pontos);
   avisar('Fim. ' + fmtPontos(pontos) + ' pontos, incluindo ' + fmtPontos(jog.bonus) + ' de bônus.');
   $('#btnDeNovo').focus({ preventScroll: true });
 }
 
 function comecar() {
+  $('#jogador').classList.remove('rodada-encerrada');
+  window.CalaRanking?.inicio();
   iniciarAudio();
   jogo.modo = 'jogando'; jogo.tempo = 0; jogo.bloco = 1; jogo.fx = [];
   Object.assign(jog, { alvo: 'C', segP: false, segK: false, ponteiro: null, travado: false, ativo: false, exp: 0, invul: 1.2, calaBoca: 0, pontosBase: 0, bonus: 0, sequencia: 0, sequenciaFala: null, bonusAviso: 0, ultimoBonus: 0, cartoes: 0 });
